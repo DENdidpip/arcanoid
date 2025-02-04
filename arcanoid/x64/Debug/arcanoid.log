@@ -1,2 +1,6 @@
 ﻿  main.c
+C:\Users\DAN\source\repos\arcanoid\arcanoid\main.c(76,26): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\DAN\source\repos\arcanoid\arcanoid\main.c(77,26): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\DAN\source\repos\arcanoid\arcanoid\main.c(92,26): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\DAN\source\repos\arcanoid\arcanoid\main.c(93,26): warning C4244: =: преобразование "int" в "float", возможна потеря данных
   arcanoid.vcxproj -> C:\Users\DAN\source\repos\arcanoid\x64\Debug\arcanoid.exe

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <conio.h>
 #include <Windows.h>
+#include <math.h>
 
 typedef struct {
     int x, y, width;
@@ -13,7 +14,8 @@ typedef struct {
 Plate our_plate;
 
 typedef struct {
-    int x, y;
+    float x, y;
+    int ix, iy;
 } Our_ball;
 Our_ball ball;
 
@@ -71,18 +73,28 @@ void hideCursor() {
 }
 
 void initBall() {
-    ball.x = 2;
-    ball.y = 2;
-}
-void putBall(char field[25][65]) {
-    field[ball.y][ball.x] = '*';
+    ball.x = our_plate.x + our_plate.width / 2;
+    ball.y = our_plate.y - 1;
+    ball.ix = (int)round(ball.x);
+    ball.iy = (int)round(ball.y);
 }
 
-void moveBall(int x, int y, char field[25][65]) {
-    field[ball.y][ball.x] = ' ';
-    ball.x = x;
-    ball.y = y;
+void clearBall(char field[25][65]) {
+    field[ball.iy][ball.ix] = ' ';
 }
+
+void putBall(char field[25][65]) {
+    field[ball.iy][ball.ix] = '*';
+}
+
+void moveBall(char field[25][65]) {
+    clearBall(field);
+    ball.x = our_plate.x + our_plate.width / 2;
+    ball.y = our_plate.y - 1;
+    ball.ix = (int)round(ball.x);
+    ball.iy = (int)round(ball.y);
+}
+
 int main(void) {
     char field[25][65];
 
@@ -90,9 +102,8 @@ int main(void) {
         for (int j = 0; j < 65; ++j) {
             if (i == 0) {
                 field[i][j] = '_';
-
             }
-            else if(j == 0 || j == 64){
+            else if (j == 0 || j == 64) {
                 field[i][j] = '|';
             }
             else {
@@ -109,13 +120,11 @@ int main(void) {
         clearPlate(field);
         if (GetKeyState('A') < 0 || GetKeyState(VK_LEFT) < 0) movePlate(our_plate.x - 2);
         if (GetKeyState('D') < 0 || GetKeyState(VK_RIGHT) < 0) movePlate(our_plate.x + 2);
+        moveBall(field);
         putPlate(field);
-        moveBall(our_plate.x + our_plate.width / 2, our_plate.y - 1, field);
         putBall(field);
         print(field);
     } while (1);
 
-
     return 0;
 }
-//check
