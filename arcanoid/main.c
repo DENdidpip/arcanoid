@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <Windows.h>
 #include <math.h>
+#include <stdbool.h>
 
 typedef struct {
     int x, y, width;
@@ -16,6 +17,7 @@ Plate our_plate;
 typedef struct {
     float x, y;
     int ix, iy;
+    float speed, angle;
 } Our_ball;
 Our_ball ball;
 
@@ -77,6 +79,8 @@ void initBall() {
     ball.y = our_plate.y - 1;
     ball.ix = (int)round(ball.x);
     ball.iy = (int)round(ball.y);
+    ball.angle = -1;
+    ball.speed = 0.5;
 }
 
 void clearBall(char field[25][65]) {
@@ -87,12 +91,22 @@ void putBall(char field[25][65]) {
     field[ball.iy][ball.ix] = '*';
 }
 
-void moveBall(char field[25][65]) {
+void moveBall(bool ide, int x, int y, char field[25][65]) {
     clearBall(field);
-    ball.x = our_plate.x + our_plate.width / 2;
-    ball.y = our_plate.y - 1;
+    if (ide == true) {
+        ball.x = x;
+        ball.y = y;
+    }
+    else {
+        ball.x = our_plate.x + our_plate.width / 2;
+        ball.y = our_plate.y - 1;
+    }
+
     ball.ix = (int)round(ball.x);
     ball.iy = (int)round(ball.y);
+}
+void ball_move(char field[25][65]) {
+    moveBall(true, ball.x + cos(ball.angle) * ball.speed, ball.y + sin(ball.angle)* ball.speed, field);
 }
 
 int main(void) {
@@ -120,7 +134,7 @@ int main(void) {
         clearPlate(field);
         if (GetKeyState('A') < 0 || GetKeyState(VK_LEFT) < 0) movePlate(our_plate.x - 2);
         if (GetKeyState('D') < 0 || GetKeyState(VK_RIGHT) < 0) movePlate(our_plate.x + 2);
-        moveBall(field);
+        moveBall(false, 0,0,field);
         putPlate(field);
         putBall(field);
         print(field);
@@ -128,3 +142,4 @@ int main(void) {
 
     return 0;
 }
+
