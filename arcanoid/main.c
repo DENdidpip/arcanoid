@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <math.h>
 #include <stdbool.h>
+#define M_PI 3.14159
 
 typedef struct {
     int x, y, width;
@@ -80,7 +81,7 @@ void initBall() {
     ball.ix = (int)round(ball.x);
     ball.iy = (int)round(ball.y);
     ball.angle = -1;
-    ball.speed = 0.5;
+    ball.speed = 1;
 }
 
 void clearBall(char field[25][65]) {
@@ -91,23 +92,45 @@ void putBall(char field[25][65]) {
     field[ball.iy][ball.ix] = '*';
 }
 
-void moveBall(bool ide, int x, int y, char field[25][65]) {
-    clearBall(field);
-    if (ide == true) {
-        ball.x = x;
-        ball.y = y;
+bool ballStarted = false;
+
+void ball_move() {
+    if (!ballStarted) {
+        ballStarted = true;
     }
-    else {
+}
+
+void moveBall(char field[25][65]) {
+    clearBall(field);
+
+    if (!ballStarted) {
         ball.x = our_plate.x + our_plate.width / 2;
         ball.y = our_plate.y - 1;
+    }
+    else {
+
+        ball.x += cos(ball.angle) * ball.speed;
+        ball.y += sin(ball.angle) * ball.speed;
     }
 
     ball.ix = (int)round(ball.x);
     ball.iy = (int)round(ball.y);
+
+    if (ball.ix <= 1 || ball.ix >= 63) ball.angle = M_PI - ball.angle;
+    if (ball.iy <= 1) ball.angle = -ball.angle;
+
+    if (ball.iy == our_plate.y - 1 && ball.ix >= our_plate.x && ball.ix <= our_plate.x + our_plate.width) {
+        ball.angle = -ball.angle;
+    }
+
+    if (ball.iy >= 24) {
+        ballStarted = false;
+    }
+
+    putBall(field);
 }
-void ball_move(char field[25][65]) {
-    moveBall(true, ball.x + cos(ball.angle) * ball.speed, ball.y + sin(ball.angle)* ball.speed, field);
-}
+
+
 
 int main(void) {
     char field[25][65];
@@ -132,13 +155,19 @@ int main(void) {
     do {
         secture(0, 0);
         clearPlate(field);
+
         if (GetKeyState('A') < 0 || GetKeyState(VK_LEFT) < 0) movePlate(our_plate.x - 2);
         if (GetKeyState('D') < 0 || GetKeyState(VK_RIGHT) < 0) movePlate(our_plate.x + 2);
-        moveBall(false, 0,0,field);
+        if (GetKeyState('W') < 0 || GetKeyState(VK_UP) < 0) ball_move();
+
+        moveBall(field);
         putPlate(field);
         putBall(field);
         print(field);
+
     } while (1);
+
+
 
     return 0;
 }
